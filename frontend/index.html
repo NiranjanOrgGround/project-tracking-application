@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Tracking Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .nav {
+            background-color: #2c3e50;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: #3498db;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .status-active {
+            color: #27ae60;
+            font-weight: 500;
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success {
+            color: #155724;
+            background-color: #d4edda;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 1rem;
+        }
+
+        .error {
+            color: #721c24;
+            background-color: #f8d7da;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-brand">Project Tracker</a>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showContent('dashboard')" class="nav-link active">Dashboard</a></li>
+                <li><a href="#" onclick="showContent('projects')" class="nav-link">Projects</a></li>
+                <li><a href="#" onclick="showContent('resources')" class="nav-link">Resources</a></li>
+                <li><a href="#" onclick="showContent('milestones')" class="nav-link">Milestones</a></li>
+                <li><a href="#" onclick="showContent('reports')" class="nav-link">Reports</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Dashboard Content -->
+        <div id="dashboard" class="content active">
+            <h1>Dashboard</h1>
+            
+            <div class="grid-3" style="margin-bottom: 2rem;">
+                <div class="card stats-card">
+                    <div class="stats-number" id="total-projects">0</div>
+                    <div class="stats-label">Total Projects</div>
+                </div>
+                <div class="card stats-card">
+                    <div class="stats-number" id="total-resources">0</div>
+                    <div class="stats-label">Total Resources</div>
+                </div>
+                <div class="card stats-card">
+                    <div class="stats-number" id="total-milestones">0</div>
+                    <div class="stats-label">Total Milestones</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Projects</h2>
+                <div id="recent-projects">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Projects Content -->
+        <div id="projects" class="content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1>Projects</h1>
+                <button class="btn" onclick="toggleProjectForm()">Add Project</button>
+            </div>
+
+            <div id="project-form" class="card hidden" style="margin-bottom: 2rem;">
+                <h2>Add New Project</h2>
+                <form onsubmit="createProject(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Project Name</label>
+                            <input type="text" id="project-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Project ID</label>
+                            <input type="text" id="project-id" required>
+                        </div>
+                        <div class="form-group">
+                            <label>PO Number</label>
+                            <input type="text" id="po-number">
+                        </div>
+                        <div class="form-group">
+                            <label>PO Date</label>
+                            <input type="date" id="po-date">
+                        </div>
+                        <div class="form-group">
+                            <label>Client</label>
+                            <input type="text" id="client">
+                        </div>
+                        <div class="form-group">
+                            <label>PO Amount</label>
+                            <input type="number" step="0.01" id="po-amount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" id="start-date">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" id="end-date">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Create Project</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>All Projects</h2>
+                <div id="projects-list">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Resources Content -->
+        <div id="resources" class="content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1>Resources</h1>
+                <button class="btn" onclick="toggleResourceForm()">Add Resource</button>
+            </div>
+
+            <div id="resource-form" class="card hidden" style="margin-bottom: 2rem;">
+                <h2>Add New Resource</h2>
+                <form onsubmit="createResource(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="resource-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Resource ID</label>
+                            <input type="text" id="resource-id" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="resource-email">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="resource-phone">
+                        </div>
+                        <div class="form-group">
+                            <label>Salary</label>
+                            <input type="number" step="0.01" id="resource-salary">
+                        </div>
+                        <div class="form-group">
+                            <label>Hourly Rate</label>
+                            <input type="number" step="0.01" id="resource-hourly-rate">
+                        </div>
+                        <div class="form-group">
+                            <label>Experience (Years)</label>
+                            <input type="number" id="resource-experience">
+                        </div>
+                        <div class="form-group">
+                            <label>Skills</label>
+                            <textarea id="resource-skills" placeholder="e.g., JavaScript, React, Node.js"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Certifications</label>
+                        <textarea id="resource-certifications" placeholder="e.g., AWS Certified, PMP"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Create Resource</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>All Resources</h2>
+                <div id="resources-list">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Milestones Content -->
+        <div id="milestones" class="content">
+            <h1>Milestones</h1>
+            <div class="card">
+                <p>Milestone management functionality - requires project selection and milestone tracking.</p>
+            </div>
+        </div>
+
+        <!-- Reports Content -->
+        <div id="reports" class="content">
+            <h1>Reports & Analytics</h1>
+            
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2>Financial Summary</h2>
+                <div class="grid-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="total-po-amount">$0</div>
+                        <div class="stats-label">Total PO Amount</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="total-budget">$0</div>
+                        <div class="stats-label">Total Project Budget</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-number" id="active-projects">0</div>
+                        <div class="stats-label">Active Projects</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Project Financial Details</h2>
+                <div id="financial-reports">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        
+        function showContent(contentId) {
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected content
+            document.getElementById(contentId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+            
+            // Load data for the selected content
+            if (contentId === 'dashboard') {
+                loadDashboard();
+            } else if (contentId === 'projects') {
+                loadProjects();
+            } else if (contentId === 'resources') {
+                loadResources();
+            } else if (contentId === 'reports') {
+                loadReports();
+            }
+        }
+
+        function toggleProjectForm() {
+            const form = document.getElementById('project-form');
+            form.classList.toggle('hidden');
+        }
+
+        function toggleResourceForm() {
+            const form = document.getElementById('resource-form');
+            form.classList.toggle('hidden');
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard`);
+                const data = await response.json();
+                
+                document.getElementById('total-projects').textContent = data.totalProjects || 0;
+                document.getElementById('total-resources').textContent = data.totalResources || 0;
+                document.getElementById('total-milestones').textContent = data.totalMilestones || 0;
+                
+                const recentProjectsDiv = document.getElementById('recent-projects');
+                if (data.recentProjects && data.recentProjects.length > 0) {
+                    const table = createProjectTable(data.recentProjects);
+                    recentProjectsDiv.innerHTML = table;
+                } else {
+                    recentProjectsDiv.innerHTML = '<p>No projects found. <a href="#" onclick="showContent(\'projects\')">Create your first project</a>.</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+                document.getElementById('recent-projects').innerHTML = '<p>Failed to load dashboard data. Make sure the backend server is running.</p>';
+            }
+        }
+
+        async function loadProjects() {
+            try {
+                const response = await fetch(`${API_BASE}/projects`);
+                const projects = await response.json();
+                
+                const projectsList = document.getElementById('projects-list');
+                if (projects.length > 0) {
+                    const table = createProjectTable(projects);
+                    projectsList.innerHTML = table;
+                } else {
+                    projectsList.innerHTML = '<p>No projects found. Create your first project using the "Add Project" button.</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load projects:', error);
+                document.getElementById('projects-list').innerHTML = '<p>Failed to load projects. Make sure the backend server is running.</p>';
+            }
+        }
+
+        async function loadResources() {
+            try {
+                const response = await fetch(`${API_BASE}/resources`);
+                const resources = await response.json();
+                
+                const resourcesList = document.getElementById('resources-list');
+                if (resources.length > 0) {
+                    const table = createResourceTable(resources);
+                    resourcesList.innerHTML = table;
+                } else {
+                    resourcesList.innerHTML = '<p>No resources found. Create your first resource using the "Add Resource" button.</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load resources:', error);
+                document.getElementById('resources-list').innerHTML = '<p>Failed to load resources. Make sure the backend server is running.</p>';
+            }
+        }
+
+        async function loadReports() {
+            try {
+                const [projectsResponse, resourcesResponse] = await Promise.all([
+                    fetch(`${API_BASE}/projects`),
+                    fetch(`${API_BASE}/resources`)
+                ]);
+                
+                const projects = await projectsResponse.json();
+                const resources = await resourcesResponse.json();
+                
+                // Calculate totals
+                const totalPOAmount = projects.reduce((sum, p) => sum + (p.po_amount || 0), 0);
+                const totalBudget = projects.reduce((sum, p) => sum + (p.project_budget || 0), 0);
+                
+                document.getElementById('total-po-amount').textContent = `$${totalPOAmount.toLocaleString()}`;
+                document.getElementById('total-budget').textContent = `$${totalBudget.toLocaleString()}`;
+                document.getElementById('active-projects').textContent = projects.length;
+                
+                // Create financial report table
+                const reportsDiv = document.getElementById('financial-reports');
+                if (projects.length > 0) {
+                    const table = createFinancialTable(projects);
+                    reportsDiv.innerHTML = table;
+                } else {
+                    reportsDiv.innerHTML = '<p>No financial data available.</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load reports:', error);
+                document.getElementById('financial-reports').innerHTML = '<p>Failed to load reports. Make sure the backend server is running.</p>';
+            }
+        }
+
+        function createProjectTable(projects) {
+            return `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Client</th>
+                            <th>PO Amount</th>
+                            <th>Budget (70%)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${projects.map(project => `
+                            <tr>
+                                <td>${project.name}</td>
+                                <td>${project.client || 'N/A'}</td>
+                                <td>$${(project.po_amount || 0).toLocaleString()}</td>
+                                <td>$${(project.project_budget || 0).toLocaleString()}</td>
+                                <td><span class="status-active">${project.status || 'Active'}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function createResourceTable(resources) {
+            return `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Resource ID</th>
+                            <th>Email</th>
+                            <th>Experience</th>
+                            <th>Hourly Rate</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${resources.map(resource => `
+                            <tr>
+                                <td>${resource.name}</td>
+                                <td>${resource.resource_id}</td>
+                                <td>${resource.email || 'N/A'}</td>
+                                <td>${resource.experience_years || 0} years</td>
+                                <td>$${resource.hourly_rate || 0}</td>
+                                <td><span class="status-active">${resource.status || 'Active'}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function createFinancialTable(projects) {
+            return `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Client</th>
+                            <th>PO Amount</th>
+                            <th>Budget (70%)</th>
+                            <th>Variance</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${projects.map(project => {
+                            const variance = (project.po_amount || 0) - (project.project_budget || 0);
+                            return `
+                                <tr>
+                                    <td>${project.name}</td>
+                                    <td>${project.client || 'N/A'}</td>
+                                    <td>$${(project.po_amount || 0).toLocaleString()}</td>
+                                    <td>$${(project.project_budget || 0).toLocaleString()}</td>
+                                    <td>$${variance.toLocaleString()}</td>
+                                    <td><span class="status-active">${project.status || 'Active'}</span></td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function createProject(event) {
+            event.preventDefault();
+            
+            const projectData = {
+                name: document.getElementById('project-name').value,
+                project_id: document.getElementById('project-id').value,
+                po_number: document.getElementById('po-number').value,
+                po_date: document.getElementById('po-date').value,
+                client: document.getElementById('client').value,
+                po_amount: parseFloat(document.getElementById('po-amount').value),
+                start_date: document.getElementById('start-date').value,
+                end_date: document.getElementById('end-date').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/projects`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(projectData)
+                });
+
+                if (response.ok) {
+                    // Reset form
+                    event.target.reset();
+                    toggleProjectForm();
+                    loadProjects();
+                    showMessage('Project created successfully!', 'success');
+                } else {
+                    showMessage('Failed to create project', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating project:', error);
+                showMessage('Error creating project', 'error');
+            }
+        }
+
+        async function createResource(event) {
+            event.preventDefault();
+            
+            const resourceData = {
+                name: document.getElementById('resource-name').value,
+                resource_id: document.getElementById('resource-id').value,
+                email: document.getElementById('resource-email').value,
+                phone: document.getElementById('resource-phone').value,
+                salary: parseFloat(document.getElementById('resource-salary').value) || null,
+                hourly_rate: parseFloat(document.getElementById('resource-hourly-rate').value) || null,
+                experience_years: parseInt(document.getElementById('resource-experience').value) || null,
+                skills: document.getElementById('resource-skills').value,
+                certifications: document.getElementById('resource-certifications').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/resources`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(resourceData)
+                });
+
+                if (response.ok) {
+                    // Reset form
+                    event.target.reset();
+                    toggleResourceForm();
+                    loadResources();
+                    showMessage('Resource created successfully!', 'success');
+                } else {
+                    showMessage('Failed to create resource', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating resource:', error);
+                showMessage('Error creating resource', 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(messageDiv, container.firstChild);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Load dashboard on page load
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>

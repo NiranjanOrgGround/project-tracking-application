@@ -1,0 +1,31 @@
+{
+  "name": "project-tracking-application",
+  "version": "1.0.0",
+  "description": "Project Tracking Application for comprehensive project management",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "postinstall": "cd backend && npm install",
+    "build": "echo 'Build completed'",
+    "test": "cd backend && npm test"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NiranjanOrgGround/project-tracking-application.git"
+  },
+  "keywords": [
+    "project-tracking",
+    "project-management",
+    "nodejs",
+    "react",
+    "azure"
+  ],
+  "author": "Project Tracking Team",
+  "license": "MIT"
+}
